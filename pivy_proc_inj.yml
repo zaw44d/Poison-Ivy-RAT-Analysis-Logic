@@ -1,0 +1,23 @@
+title: Suspicious Process Spawning Injected Host Binary
+status: ProofOfConcept
+description: Detects unusual parent processes spawning explorer.exe or svchost.exe, which indicates process injection or hollowing.
+author: zaw44d
+tags:
+    - attack.defense_evasion
+    - attack.t1055.012
+logsource:
+    category: process_creation
+    system: windows
+detection:
+    selection:
+        Image|endswith:
+            - '\explorer.exe'
+            - '\svchost.exe'
+    filter_legit:
+        ParentImage|endswith:
+            - '\userinit.exe'
+            - '\services.exe'
+            - '\wininit.exe'
+    condition: selection and not filter_legit
+falsepositives:
+    - Admin scripts or software deployment tools
